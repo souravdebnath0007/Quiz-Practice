@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Exam Results | QuizAI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#c9e7f7",
+                        "on-error": "#ffffff",
+                        "outline": "#737687",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-secondary-container": "#4a6774",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary": "#6027e2",
+                        "surface-container-low": "#f2f4f6",
+                        "primary": "#004bca",
+                        "on-primary-fixed": "#00174b",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e8deff",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-variant": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#001f2a",
+                        "primary-container": "#0061ff",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "primary-fixed": "#dbe1ff",
+                        "on-surface-variant": "#424656",
+                        "surface-tint": "#0052dc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#4f00d0",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "background": "#f7f9fb",
+                        "on-tertiary-container": "#f7f0ff",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#c2c6d9",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#7949fb",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-fixed": "#20005f",
+                        "on-secondary-fixed-variant": "#2e4b57",
+                        "secondary-fixed-dim": "#adcbda",
+                        "surface-bright": "#f7f9fb",
+                        "inverse-primary": "#b4c5ff",
+                        "tertiary-fixed-dim": "#cdbdff",
+                        "on-surface": "#191c1e",
+                        "surface-dim": "#d8dadc",
+                        "secondary-container": "#c6e4f4",
+                        "secondary": "#466270",
+                        "on-primary-container": "#f1f2ff",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface": "#f7f9fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "8px",
+                        "lg": "8px",
+                        "xl": "12px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "max_width": "1200px",
+                        "gutter": "24px",
+                        "xs": "8px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "sm": "12px",
+                        "margin": "24px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .score-circle {
+            transform: rotate(-90deg);
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .accordion-content.open {
+            max-height: 500px;
+        }
+
+        .card-shadow {
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.02), 0px 4px 12px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+    <main class="flex-grow w-full max-w-[1200px] mx-auto px-lg py-xl">
+        <!-- Top Section: Success & Score -->
+        <section class="flex flex-col items-center text-center mb-xl">
+            <div class="w-20 h-20 bg-primary-container/10 rounded-full flex items-center justify-center mb-md">
+                <span class="material-symbols-outlined text-primary text-5xl"
+                    style="font-variation-settings: 'wght' 700;">check_circle</span>
+            </div>
+            <h1 class="font-headline-lg text-headline-lg text-on-surface mb-xl">Exam Completed</h1>
+            <!-- Large Score Card -->
+            <div
+                class="bg-surface w-full max-w-2xl rounded-xl card-shadow p-xl border border-outline-variant flex flex-col md:flex-row items-center justify-around gap-lg">
+                <div class="relative w-48 h-48">
+                    <svg class="w-full h-full" viewbox="0 0 100 100">
+                        <circle class="text-surface-container-high stroke-current" cx="50" cy="50" fill="transparent"
+                            r="42" stroke-width="8"></circle>
+                        <circle class="text-primary stroke-current score-circle" cx="50" cy="50" fill="transparent"
+                            r="42" stroke-dasharray="264" stroke-dashoffset="{{ result.circle_offset }}"
+                            stroke-linecap="round" stroke-width="8"></circle>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span class="font-display-lg text-headline-lg text-primary">{{ result.accuracy }}%</span>
+                        <span class="font-label-md text-label-md text-on-surface-variant">Overall Score</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center md:items-start">
+                    <div class="font-display-lg text-display-lg text-on-surface">{{ result.score }}
+                        <span class="text-on-surface-variant text-headline-lg">
+                            / {{ result.total }}
+                        </span>
+                    </div>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant mt-xs">
+                        {% if result.accuracy >= 90 %}
+                        Excellent work! You've mastered this topic.
+
+                        {% elif result.accuracy >= 75 %}
+                        Very Good Performance!
+
+                        {% elif result.accuracy >= 50 %}
+                        Good effort. Keep Practicing.
+
+                        {% else %}
+                        Keep Learning. Practice makes perfect.
+
+                        {% endif %}
+                    </p>
+                    <div
+                        class="mt-md px-md py-xs bg-secondary-container text-on-secondary-container rounded-full font-label-md text-label-md">
+                        {% if result.accuracy >= 90 %}
+                        Level : Expert
+
+                        {% elif result.accuracy >=75 %}
+                        Level : Advanced
+
+                        {% elif result.accuracy >=50 %}
+                        Level : Intermediate
+
+                        {% else %}
+                        Level : Beginner
+
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Performance Cards Grid -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl">
+            <div class="bg-surface p-lg rounded-xl card-shadow border border-outline-variant flex flex-col gap-xs">
+                <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Correct
+                    Answers</span>
+                <div class="flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-primary">check_circle</span>
+                    <span class="font-title-lg text-title-lg font-bold text-on-surface">{{ result.correct }}</span>
+                </div>
+            </div>
+            <div class="bg-surface p-lg rounded-xl card-shadow border border-outline-variant flex flex-col gap-xs">
+                <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Wrong
+                    Answers</span>
+                <div class="flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-error">cancel</span>
+                    <span class="font-title-lg text-title-lg font-bold text-on-surface">{{ result.wrong }}</span>
+                </div>
+            </div>
+            <div class="bg-surface p-lg rounded-xl card-shadow border border-outline-variant flex flex-col gap-xs">
+                <span
+                    class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Accuracy</span>
+                <div class="flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-tertiary">target</span>
+                    <span class="font-title-lg text-title-lg font-bold text-on-surface">{{ result.accuracy }}%</span>
+                </div>
+            </div>
+            <div class="bg-surface p-lg rounded-xl card-shadow border border-outline-variant flex flex-col gap-xs">
+                <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Time
+                    Taken</span>
+                <div class="flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-secondary">timer</span>
+                    <span class="font-title-lg text-title-lg font-bold text-on-surface">{{ result.time }}</span>
+                </div>
+            </div>
+        </section>
+        <!-- Question Review Section -->
+        <section class="mb-xl">
+            <div class="flex items-center justify-between mb-lg">
+                <h2 class="font-headline-lg text-title-lg text-on-surface">Detailed Question Review</h2>
+                <div class="flex gap-sm">
+                    <button
+                        class="px-md py-xs bg-surface-container-high rounded-full font-label-md text-label-md text-on-surface">All</button>
+                    <button
+                        class="px-md py-xs bg-surface border border-outline-variant rounded-full font-label-md text-label-md text-on-surface-variant">Incorrect
+                        Only</button>
+                </div>
+            </div>
+            <div class="space-y-lg">
+
+                <!-- <div class="bg-surface rounded-xl card-shadow border border-outline-variant overflow-hidden">
+                    <div class="p-lg">
+                        <div class="flex items-start justify-between mb-md">
+                            <span
+                                class="px-md py-xs bg-primary/10 text-primary rounded-full font-label-md text-label-md">Question
+                                1</span>
+                            <span class="material-symbols-outlined text-primary"
+                                style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        </div>
+                        <p class="font-body-lg text-body-lg text-on-surface mb-lg">In modern cloud architecture, what is
+                            the primary purpose of a 'Dead Letter Queue' (DLQ)?</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                            <div
+                                class="p-md border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface-variant">
+                                To store frequently accessed static assets</div>
+                            <div
+                                class="p-md border-2 border-primary bg-primary/5 rounded-lg font-body-md text-body-md text-on-surface flex items-center justify-between">
+                                To handle messages that cannot be processed successfully
+                                <span class="material-symbols-outlined text-primary text-sm">check</span>
+                            </div>
+                            <div
+                                class="p-md border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface-variant">
+                                To serve as a secondary database for analytics</div>
+                            <div
+                                class="p-md border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface-variant">
+                                To manage user authentication sessions</div>
+                        </div>
+                    </div>
+                    <div class="border-t border-outline-variant">
+                        <button
+                            class="w-full flex items-center justify-between px-lg py-md hover:bg-surface-container-low transition-colors text-primary font-label-lg"
+                            onclick="toggleAccordion('expl-1')">
+                            <span class="flex items-center gap-sm"><span
+                                    class="material-symbols-outlined text-md">psychology</span> Explanation</span>
+                            <span class="material-symbols-outlined transition-transform"
+                                id="icon-expl-1">expand_more</span>
+                        </button>
+                        <div class="accordion-content bg-surface-container-low px-lg" id="expl-1">
+                            <div class="py-lg font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                A Dead Letter Queue (DLQ) is a service implementation used to store messages that meet
+                                certain criteria (like exceeding retry limits) and cannot be processed by the main
+                                application logic. This prevents the primary queue from being blocked by faulty messages
+                                and allows for later inspection and manual correction by engineers.
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- <div class="bg-surface rounded-xl card-shadow border border-error/30 overflow-hidden">
+                    <div class="p-lg">
+                        <div class="flex items-start justify-between mb-md">
+                            <span
+                                class="px-md py-xs bg-error/10 text-error rounded-full font-label-md text-label-md">Question
+                                2</span>
+                            <span class="material-symbols-outlined text-error"
+                                style="font-variation-settings: 'FILL' 1;">cancel</span>
+                        </div>
+                        <p class="font-body-lg text-body-lg text-on-surface mb-lg">Which design pattern is best suited
+                            for implementing a complex, multi-step undo/redo functionality in a text editor?</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                            <div
+                                class="p-md border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface-variant">
+                                Strategy Pattern</div>
+                            <div
+                                class="p-md border-2 border-error bg-error/5 rounded-lg font-body-md text-body-md text-on-surface flex items-center justify-between">
+                                Observer Pattern
+                                <span class="material-symbols-outlined text-error text-sm">close</span>
+                            </div>
+                            <div
+                                class="p-md border-2 border-primary bg-primary/5 rounded-lg font-body-md text-body-md text-on-surface flex items-center justify-between">
+                                Command Pattern
+                                <span class="material-symbols-outlined text-primary text-sm">check</span>
+                            </div>
+                            <div
+                                class="p-md border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface-variant">
+                                Factory Pattern</div>
+                        </div>
+                    </div>
+                    <div class="border-t border-outline-variant">
+                        <button
+                            class="w-full flex items-center justify-between px-lg py-md hover:bg-surface-container-low transition-colors text-primary font-label-lg"
+                            onclick="toggleAccordion('expl-2')">
+                            <span class="flex items-center gap-sm"><span
+                                    class="material-symbols-outlined text-md">psychology</span> Explanation</span>
+                            <span class="material-symbols-outlined transition-transform"
+                                id="icon-expl-2">expand_more</span>
+                        </button>
+                        <div class="accordion-content bg-surface-container-low px-lg" id="expl-2">
+                            <div class="py-lg font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                The **Command Pattern** is the industry standard for undo/redo. It encapsulates a
+                                request as an object, which allows you to parameterize clients with different requests,
+                                queue or log requests, and support undoable operations by storing a stack of command
+                                objects that can be executed in reverse.
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                {% for q in result.review %}
+                <div class="bg-surface rounded-xl card-shadow border
+{% if q.status %}
+border-outline-variant
+{% elif q.attempted %}
+border-error/30
+{% else %}
+border-outline-variant
+{% endif %}
+overflow-hidden">
+                    <div class="p-lg">
+                        <div class="flex items-start justify-between mb-md">
+                            <span class="px-md py-xs rounded-full font-label-md text-label-md
+            {% if q.status %}
+            bg-primary/10 text-primary
+            {% elif q.attempted %}
+            bg-error/10 text-error
+            {% else %}
+            bg-surface-container-high text-on-surface-variant
+            {% endif %}
+            ">
+                                Question {{ q.question_number }}
+                            </span>
+                            <span class="material-symbols-outlined
+            {% if q.status %}
+            text-primary
+            {% elif q.attempted %}
+            text-error
+            {% else %}
+            text-on-surface-variant
+            {% endif %}
+            " style="font-variation-settings:'FILL' 1;">
+                                {% if q.status %}
+                                check_circle
+                                {% elif q.attempted %}
+                                cancel
+                                {% else %}
+                                radio_button_unchecked
+                                {% endif %}
+                            </span>
+                        </div>
+                        <p class="font-body-lg text-body-lg text-on-surface mb-lg">
+                            {{ q.question }}
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                            {% for option in q.options %}
+                            <div class="p-md rounded-lg font-body-md text-body-md flex items-center justify-between
+            {% if loop.index0 == q.correct_index %}
+            border-2 border-primary bg-primary/5 text-on-surface
+            {% elif loop.index0 == q.selected_index %}
+            border-2 border-error bg-error/5 text-on-surface
+            {% else %}
+            border border-outline-variant text-on-surface-variant
+            {% endif %}
+            ">
+                                {{ option }}
+                                {% if loop.index0 == q.correct_index %}
+                                <span class="material-symbols-outlined text-primary text-sm">
+                                    check
+                                </span>
+                                {% elif loop.index0 == q.selected_index %}
+                                <span class="material-symbols-outlined text-error text-sm">
+                                    close
+                                </span>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="border-t border-outline-variant">
+                        <button
+                            class="w-full flex items-center justify-between px-lg py-md hover:bg-surface-container-low transition-colors text-primary font-label-lg"
+                            onclick="toggleAccordion('expl-{{ loop.index }}')">
+                            <span class="flex items-center gap-sm">
+                                <span class="material-symbols-outlined text-md">
+                                    psychology
+                                </span>
+                                Explanation
+                            </span>
+                            <span class="material-symbols-outlined transition-transform"
+                                id="icon-expl-{{ loop.index }}">
+                                expand_more
+                            </span>
+                        </button>
+                        <div class="accordion-content bg-surface-container-low px-lg" id="expl-{{ loop.index }}">
+                            <div class="py-lg font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                {{ q.discussion }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        <!-- Bottom Navigation Buttons -->
+        <section
+            class="flex flex-col sm:flex-row items-center justify-center gap-md py-xl border-t border-outline-variant">
+            <button onclick="window.location='/'"
+                class="w-full sm:w-auto px-xl py-md rounded-xl border border-primary text-primary font-label-lg hover:bg-primary/5 transition-colors">Generate
+                New Quiz</button>
+        </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-surface-container-low border-t border-outline-variant">
+        <div
+            class="w-full py-xl px-lg mt-auto flex flex-col md:flex-row justify-between items-center max-w-[1200px] mx-auto gap-md">
+            <div class="font-label-lg text-label-lg font-bold text-on-surface">QuizAI Premium</div>
+            <p class="font-body-md text-body-md text-on-surface-variant">© 2026 QuizAI Premium. All rights reserved.</p>
+            <div class="flex gap-lg">
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary underline transition-all"
+                    href="#">Privacy Policy</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary underline transition-all"
+                    href="#">Terms of Service</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary underline transition-all"
+                    href="#">Support</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+</body>
+
+</html>

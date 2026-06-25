@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>QuizAI | AI Exam Generator</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#0052dc",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary-container": "#7949fb",
+                        "on-secondary-fixed-variant": "#2e4b57",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "primary-container": "#0061ff",
+                        "on-secondary-fixed": "#001f2a",
+                        "on-tertiary-fixed": "#20005f",
+                        "outline-variant": "#c2c6d9",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#004bca",
+                        "on-secondary-container": "#4a6774",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary-container": "#c6e4f4",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#00174b",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#f1f2ff",
+                        "tertiary-fixed": "#e8deff",
+                        "background": "#f7f9fb",
+                        "on-tertiary-fixed-variant": "#4f00d0",
+                        "secondary": "#466270",
+                        "surface": "#f7f9fb",
+                        "on-surface-variant": "#424656",
+                        "on-surface": "#191c1e",
+                        "surface-container": "#eceef0",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed-dim": "#cdbdff",
+                        "tertiary": "#6027e2",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-tertiary-container": "#f7f0ff",
+                        "secondary-fixed": "#c9e7f7",
+                        "inverse-surface": "#2d3133",
+                        "surface-container-high": "#e6e8ea",
+                        "secondary-fixed-dim": "#adcbda",
+                        "surface-bright": "#f7f9fb",
+                        "inverse-primary": "#b4c5ff",
+                        "outline": "#737687"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "xl": "32px",
+                        "max_width": "1200px",
+                        "base": "4px",
+                        "margin": "24px",
+                        "sm": "12px",
+                        "gutter": "24px",
+                        "md": "16px",
+                        "xs": "8px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .segmented-button-active {
+            background-color: white;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05), 0px 4px 12px rgba(0, 0, 0, 0.08);
+            color: #004bca;
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #f0f4ff 25%, #e2e8f0 50%, #f0f4ff 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        /* Material Input Focus Effects */
+        .m3-input:focus-within label {
+            transform: translateY(-24px) scale(0.85);
+            color: #004bca;
+            background-color: #f7f9fb;
+            padding: 0 4px;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+    <!-- TopNavBar -->
+    <header class="w-full sticky top-0 z-50 bg-surface dark:bg-on-background shadow-sm">
+        <nav class="flex justify-between items-center px-margin py-sm max-w-max_width mx-auto">
+            <div class="flex items-center gap-xs">
+                <span class="font-display-lg text-title-lg font-bold text-primary dark:text-primary-fixed">QuizAI</span>
+            </div>
+            <div class="hidden md:flex items-center gap-xl">
+                <a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors"
+                    href="#">Dashboard</a>
+                <a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors"
+                    href="#">My Quizzes</a>
+                <a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors"
+                    href="#">Library</a>
+            </div>
+            <div class="flex items-center gap-md">
+                <button
+                    class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-pointer p-xs">notifications</button>
+                <button
+                    class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-pointer p-xs">settings</button>
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+                    <img class="w-full h-full object-cover"
+                        data-alt="A professional user profile portrait in a minimalist digital workspace environment. The subject is a focused learner with a modern aesthetic, set against a soft bokeh background of a high-tech library. The lighting is bright and airy, reflecting a clean light-mode interface design with subtle blue accents."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2fBOVAQ6MQHlZ4c6cGdRPCeeUeFjuMjdqsSwLZlwJ58FcyxXWp0caJyXlanO9n8YCJ7h-ZI-EN_e9gjMK05rqAv81m7cdqFNSWA-STySVK-21rdeS0oUZTbM7i8vXUfRZkNR4n5mSrSHczeJWzneDZZXy0WtH5ZinWT5PQ2P5jGIy0tAkJUpqP5RfEsPsu9M_fitvRpGbenE_sVrpXKkx5LWGLVxBwLLzFo2_mmwsnvUktp2ONOoYfC7nk77WVaX2izxFOFJCgxW6" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="flex-grow flex flex-col items-center justify-center px-margin py-xl">
+        <!-- Content Container -->
+        <div class="w-full max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <!-- Header Section -->
+            <div class="text-center mb-xl">
+                <h1 class="font-headline-lg text-headline-lg text-on-background mb-xs">AI Exam Generator</h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant">Generate high-quality AI-powered MCQ
+                    practice tests.</p>
+            </div>
+            <!-- Exam Setup Card -->
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-xl shadow-[0px_4px_12px_rgba(0,0,0,0.04)] transition-all duration-300"
+                id="exam-card">
+                <form id="generator-form" class="space-y-xl" autocomplete="off">
+                    <!-- Topic Input -->
+                    <div class="relative group">
+                        <label class="block text-label-lg font-label-lg text-on-surface-variant mb-xs ml-1">Topic
+                            (Required)</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">book</span>
+                            <input id="topic" name="topic"
+                                class="w-full pl-12 pr-4 py-4 bg-[#F0F4FF] border-b-2 border-outline-variant focus:border-primary focus:ring-0 rounded-t-lg font-body-lg transition-all outline-none"
+                                placeholder="e.g. Data Structures and Algorithms" required type="text" />
+                        </div>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <button
+                                class="text-label-md px-xs py-1 rounded-full bg-secondary-container text-on-secondary-container hover:bg-primary-container hover:text-white transition-colors"
+                                onclick="setTopic('Operating System')" type="button">Operating System</button>
+                            <button
+                                class="text-label-md px-xs py-1 rounded-full bg-secondary-container text-on-secondary-container hover:bg-primary-container hover:text-white transition-colors"
+                                onclick="setTopic('DBMS')" type="button">DBMS</button>
+                            <button
+                                class="text-label-md px-xs py-1 rounded-full bg-secondary-container text-on-secondary-container hover:bg-primary-container hover:text-white transition-colors"
+                                onclick="setTopic('Computer Networks')" type="button">Computer Networks</button>
+                        </div>
+                    </div>
+                    <!-- Subtopic Input -->
+                    <div class="relative group">
+                        <label class="block text-label-lg font-label-lg text-on-surface-variant mb-xs ml-1">Subtopic
+                            (Optional)</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">schema</span>
+                            <input id="subtopic" name="subtopic"
+                                class="w-full pl-12 pr-4 py-4 bg-[#F0F4FF] border-b-2 border-outline-variant focus:border-primary focus:ring-0 rounded-t-lg font-body-lg transition-all outline-none"
+                                placeholder="e.g. Arrays, Graphs, Sorting" type="text" />
+                        </div>
+                    </div>
+                    <!-- Difficulty Segmented Buttons -->
+                    <div>
+                        <label
+                            class="block text-label-lg font-label-lg text-on-surface-variant mb-xs ml-1">Difficulty</label>
+                        <input type="hidden" id="difficulty" name="difficulty" value="Easy" />
+                        <div class="flex p-1 bg-surface-container rounded-xl border border-outline-variant">
+                            <button
+                                class="difficulty-btn flex-1 py-2 text-label-lg font-label-lg rounded-lg transition-all duration-200 segmented-button-active"
+                                onclick="selectDifficulty(this)" type="button">Easy</button>
+                            <button
+                                class="difficulty-btn flex-1 py-2 text-label-lg font-label-lg rounded-lg text-on-surface-variant transition-all duration-200"
+                                onclick="selectDifficulty(this)" type="button">Medium</button>
+                            <button
+                                class="difficulty-btn flex-1 py-2 text-label-lg font-label-lg rounded-lg text-on-surface-variant transition-all duration-200"
+                                onclick="selectDifficulty(this)" type="button">Hard</button>
+                        </div>
+                    </div>
+                    <!-- Number of Questions -->
+                    <div>
+                        <label class="block text-label-lg font-label-lg text-on-surface-variant mb-xs ml-1">Number of
+                            Questions</label>
+                        <div class="relative">
+                            <select id="questionCount" name="questions"
+                                class="w-full appearance-none pl-4 pr-10 py-4 bg-[#F0F4FF] border-b-2 border-outline-variant focus:border-primary focus:ring-0 rounded-t-lg font-body-lg transition-all outline-none cursor-pointer">
+                                <option value="10">10 Questions</option>
+                                <option value="20">20 Questions</option>
+                                <option value="30">30 Questions</option>
+                            </select>
+                            <span
+                                class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+                        </div>
+                        <div class="mt-xs flex items-start gap-xs text-on-surface-variant">
+                            <span class="material-symbols-outlined text-sm mt-0.5" style="font-size: 16px;">info</span>
+                            <p class="text-label-md">More than 30 AI-generated questions may reduce quality and increase
+                                generation time.</p>
+                        </div>
+                    </div>
+                    <!-- Generate Button -->
+                    <button
+                        class="w-full py-4 bg-primary text-on-primary rounded-xl font-label-lg text-lg flex items-center justify-center gap-xs hover:bg-surface-tint active:scale-[0.98] transition-all shadow-md"
+                        id="submit-btn" type="submit">
+                        <span class="material-symbols-outlined"
+                            style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                        <span>Generate Questions</span>
+                    </button>
+                </form>
+                <!-- Loading State (Hidden by default) -->
+                <div class="hidden py-xl flex flex-col items-center text-center space-y-md" id="loading-state">
+                    <div class="relative w-16 h-16">
+                        <div
+                            class="absolute inset-0 border-4 border-primary-container border-t-primary rounded-full animate-spin">
+                        </div>
+                        <div class="absolute inset-2 bg-white rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary animate-pulse">psychology</span>
+                        </div>
+                    </div>
+                    <div class="space-y-xs">
+                        <h3 class="font-title-lg text-title-lg text-primary">Creating your exam...</h3>
+                        <p class="text-on-surface-variant">Our AI is analyzing the curriculum and drafting challenging
+                            MCQs for you.</p>
+                    </div>
+                    <div class="w-full bg-surface-container rounded-full h-1.5 max-w-sm overflow-hidden">
+                        <div class="shimmer h-full w-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="w-full py-xl mt-auto bg-surface-container dark:bg-surface-container-highest">
+        <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-gutter px-margin max-w-max_width mx-auto text-center md:text-left">
+            <div class="space-y-sm">
+                <span
+                    class="font-display-lg text-title-lg font-bold text-on-surface dark:text-surface-bright">QuizAI</span>
+                <p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant max-w-sm">© 2026
+                    QuizAI. Empowering learners through AI. Every question is crafted with pedagogical precision.</p>
+            </div>
+            <div class="flex flex-wrap justify-center md:justify-end gap-md items-center">
+                <a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed underline transition-all duration-200"
+                    href="#">Privacy Policy</a>
+                <a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed underline transition-all duration-200"
+                    href="#">Terms of Service</a>
+                <a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed underline transition-all duration-200"
+                    href="#">Help Center</a>
+                <a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed underline transition-all duration-200"
+                    href="#">API Documentation</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        function selectDifficulty(element) {
+
+            const btns = document.querySelectorAll(".difficulty-btn");
+            btns.forEach(btn => {
+                btn.classList.remove("segmented-button-active");
+                btn.classList.add("text-on-surface-variant");
+            });
+
+            element.classList.add("segmented-button-active");
+            element.classList.remove("text-on-surface-variant");
+            document.getElementById("difficulty").value =
+                element.innerText.trim();
+        }
+
+        function setTopic(val) {
+            const input=document.getElementById("topic");
+            input.value = val;
+            input.focus();
+        }
+
+    </script>
+    <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>QuizAI - Data Structures &amp; Algorithms</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .active-ring {
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #004bca;
+        }
+    </style>
+    <!-- Use the provided Tailwind config -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#adcbda",
+                        "on-tertiary-fixed-variant": "#4f00d0",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#dbe1ff",
+                        "outline": "#737687",
+                        "on-primary-fixed": "#00174b",
+                        "secondary-container": "#c6e4f4",
+                        "on-secondary-fixed": "#001f2a",
+                        "on-tertiary-container": "#f7f0ff",
+                        "surface-container": "#eceef0",
+                        "on-secondary-container": "#4a6774",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary-fixed-dim": "#cdbdff",
+                        "on-secondary-fixed-variant": "#2e4b57",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-low": "#f2f4f6",
+                        "inverse-primary": "#b4c5ff",
+                        "tertiary": "#6027e2",
+                        "surface": "#f7f9fb",
+                        "on-surface-variant": "#424656",
+                        "inverse-surface": "#2d3133",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#e8deff",
+                        "on-tertiary-fixed": "#20005f",
+                        "on-error-container": "#93000a",
+                        "background": "#f7f9fb",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#0052dc",
+                        "secondary-fixed": "#c9e7f7",
+                        "primary-container": "#0061ff",
+                        "tertiary-container": "#7949fb",
+                        "surface-bright": "#f7f9fb",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-error": "#ffffff",
+                        "primary": "#004bca",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-primary-container": "#f1f2ff",
+                        "on-background": "#191c1e",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-highest": "#e0e3e5",
+                        "outline-variant": "#c2c6d9",
+                        "on-surface": "#191c1e",
+                        "secondary": "#466270"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "xs": "8px",
+                        "max_width": "1200px",
+                        "gutter": "24px",
+                        "base": "4px",
+                        "sm": "12px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+    <!-- Sticky Header (TopNavBar derived) -->
+    <header class="fixed top-0 w-full z-50 bg-surface shadow-sm border-b border-outline-variant">
+        <div class="flex justify-between items-center px-lg py-sm max-w-full mx-auto">
+            <div class="flex items-center gap-md">
+                <span class="font-display-lg text-title-lg font-bold text-primary">QuizAI</span>
+                <div class="h-6 w-px bg-outline-variant mx-2"></div>
+                <div class="flex flex-col">
+                    <h1 id="examTitle" class="font-title-lg text-title-lg leading-none">
+                        Loading...
+                    </h1>
+                    <div class="flex items-center gap-xs mt-1">
+                        <span id="difficultyBadge"
+                            class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-[10px] uppercase tracking-wider">
+                            Loading
+                        </span>
+                        <span id="questionCounter" class="font-label-md text-on-surface-variant">
+
+                            Question 1 of 1
+
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Progress & Timer Center -->
+            <div class="hidden md:flex flex-col items-center gap-xs flex-1 max-w-md px-xl">
+                <div class="flex justify-between w-full font-label-md text-on-surface-variant">
+                    <span>Overall Progress</span>
+                    <span id="progressPercent">
+                        0%
+                    </span>
+                </div>
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                    <div id="progressBar" class="bg-primary h-full rounded-full transition-all duration-500"
+                        style="width:0%">
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-md">
+                <div
+                    class="flex items-center gap-xs bg-error-container text-on-error-container px-md py-xs rounded-lg font-title-lg text-title-lg">
+                    <span class="material-symbols-outlined text-[20px]">timer</span>
+                    <span class="tabular-nums font-bold" id="timer">45:12</span>
+                </div>
+                <button
+                    class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low">account_circle</button>
+            </div>
+        </div>
+    </header>
+    <main class="pt-24 pb-24 min-h-screen flex">
+        <!-- Center-Left Content Area -->
+        <div class="flex-1 px-lg md:px-xl max-w-5xl">
+            <div
+                class="bg-surface border border-outline-variant rounded-xl shadow-sm p-lg md:p-xl transition-all duration-300">
+                <div class="flex items-center gap-xs mb-md">
+                    <span id="questionNumber" class="font-title-lg text-primary font-bold">
+                        Question 1
+                    </span>
+                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                    <span class="font-label-lg text-on-surface-variant">4 Points</span>
+                </div>
+                <h2 id="questionText" class="font-title-lg text-title-lg text-on-surface mb-xl leading-relaxed">
+                    Loading Question...
+                </h2>
+                <!-- Options Grid -->
+                <div id="optionsContainer" class="grid grid-cols-1 gap-md">
+                    <!-- Option A -->
+                    <!-- <label
+                        class="group relative flex items-center p-md border border-outline-variant rounded-xl cursor-pointer hover:border-primary hover:bg-surface-container-low transition-all duration-200">
+                        <input class="hidden" name="quiz_option" type="radio" />
+                        <div
+                            class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center font-bold text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            A</div>
+                        <span class="ml-md font-body-lg text-on-surface">Queue</span>
+                        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="material-symbols-outlined text-primary">radio_button_unchecked</span>
+                        </div>
+                    </label> -->
+                    <!-- Option B (Selected) -->
+                    <!-- <label
+                        class="group relative flex items-center p-md border-2 border-primary bg-primary-fixed rounded-xl cursor-pointer transition-all duration-200">
+                        <input checked="" class="hidden" name="quiz_option" type="radio" />
+                        <div
+                            class="w-10 h-10 rounded-lg bg-primary text-on-primary flex items-center justify-center font-bold">
+                            B</div>
+                        <span class="ml-md font-body-lg text-on-primary-fixed-variant font-semibold">Stack</span>
+                        <div class="ml-auto">
+                            <span class="material-symbols-outlined text-primary"
+                                style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        </div>
+                    </label> -->
+                    <!-- Option C -->
+                    <!-- <label
+                        class="group relative flex items-center p-md border border-outline-variant rounded-xl cursor-pointer hover:border-primary hover:bg-surface-container-low transition-all duration-200">
+                        <input class="hidden" name="quiz_option" type="radio" />
+                        <div
+                            class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center font-bold text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            C</div>
+                        <span class="ml-md font-body-lg text-on-surface">Linked List</span>
+                        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="material-symbols-outlined text-primary">radio_button_unchecked</span>
+                        </div>
+                    </label> -->
+                    <!-- Option D -->
+                    <!-- <label
+                        class="group relative flex items-center p-md border border-outline-variant rounded-xl cursor-pointer hover:border-primary hover:bg-surface-container-low transition-all duration-200">
+                        <input class="hidden" name="quiz_option" type="radio" />
+                        <div
+                            class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center font-bold text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            D</div>
+                        <span class="ml-md font-body-lg text-on-surface">Binary Tree</span>
+                        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="material-symbols-outlined text-primary">radio_button_unchecked</span>
+                        </div>
+                    </label> -->
+                </div>
+            </div>
+        </div>
+        <!-- Right Sidebar (SideNavBar derived) -->
+        <aside
+            class="hidden lg:flex flex-col w-80 h-[calc(100vh-6rem)] fixed right-0 top-24 bg-surface-container-low border-l border-outline-variant p-md gap-md overflow-y-auto">
+            <div class="flex items-center gap-sm p-xs">
+                <div
+                    class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+                    <span class="material-symbols-outlined">analytics</span>
+                </div>
+                <div>
+                    <h3 class="font-title-lg text-on-surface leading-none">Question Palette</h3>
+                    <p class="font-label-md text-on-surface-variant mt-1">75% Completed</p>
+                </div>
+            </div>
+            <div id="questionPalette" class="grid grid-cols-5 gap-xs">
+
+            </div>
+            <div class="mt-auto space-y-md">
+                <div class="p-md rounded-xl bg-surface-container-high border border-outline-variant">
+                    <h4 class="font-label-lg text-on-surface-variant mb-sm">Legend</h4>
+                    <div class="grid grid-cols-2 gap-sm text-[11px] uppercase tracking-tighter font-bold">
+                        <div class="flex items-center gap-xs">
+                            <div class="w-3 h-3 rounded-full bg-[#2e7d32]"></div> Answered
+                        </div>
+                        <div class="flex items-center gap-xs">
+                            <div class="w-3 h-3 rounded-full bg-surface-container-highest"></div> Unvisited
+                        </div>
+                        <div class="flex items-center gap-xs">
+                            <div class="w-3 h-3 rounded-full bg-[#fbc02d]"></div> Review
+                        </div>
+                        <div class="flex items-center gap-xs">
+                            <div class="w-3 h-3 rounded-full border border-primary"></div> Current
+                        </div>
+                    </div>
+                </div>
+                <button id="submitBtn"
+                    class="w-full py-md bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-all active:scale-[0.98]">Submit Exam</button>
+            </div>
+        </aside>
+    </main>
+    <!-- Bottom Sticky Footer (Footer derived) -->
+    <footer class="fixed bottom-0 w-full z-40 bg-surface-container-low border-t border-outline-variant shadow-md">
+        <div class="flex justify-between items-center px-xl py-md w-full">
+            <div class="flex items-center gap-md">
+                <button id="prevBtn"
+                    class="flex items-center gap-xs px-lg py-sm border border-outline text-primary font-bold rounded-lg hover:bg-surface-container-high transition-all">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Previous
+                </button>
+            </div>
+            <div class="flex items-center gap-lg">
+                <button id="reviewBtn"
+                    class="flex items-center gap-xs px-lg py-sm border border-[#fbc02d] text-[#fbc02d] font-bold rounded-lg hover:bg-[#fff9c4] transition-all">
+                    <span class="material-symbols-outlined">bookmark</span>
+                    Mark for Review
+                </button>
+                <button id="nextBtn"
+                    class="flex items-center gap-xs px-lg py-sm bg-primary-container text-on-primary-container font-bold rounded-lg hover:opacity-90 transition-all">
+                    Next
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-lg">
+                <button id="footerSubmitBtn"
+                    class="px-xl py-sm bg-primary text-on-primary font-bold rounded-lg shadow-sm hover:shadow-md transition-all active:scale-95">
+                    Submit Exam
+                </button>
+            </div>
+        </div>
+    </footer>
+    <!-- Confirmation Modal -->
+    <div class="hidden fixed inset-0 z-[100] flex items-center justify-center p-md" id="submit-modal">
+        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm"></div>
+        <div class="relative bg-surface p-xl rounded-[24px] shadow-2xl max-w-md w-full border border-outline-variant">
+            <div class="flex flex-col items-center text-center">
+                <div
+                    class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-md">
+                    <span class="material-symbols-outlined text-4xl">task_alt</span>
+                </div>
+                <h3 class="font-headline-lg text-on-surface mb-xs">Ready to Submit?</h3>
+                <p class="font-body-lg text-on-surface-variant mb-xl">Are you sure you want to submit your exam? You
+                    still have 45 minutes remaining and 12 questions unanswered.</p>
+                <div class="flex gap-md w-full">
+                    <button id="cancelSubmitBtn"
+                        class="flex-1 py-md text-primary font-bold hover:bg-surface-container-high rounded-xl transition-all">Cancel</button>
+                    <button id="confirmSubmitBtn"
+                        class="flex-1 py-md bg-primary text-on-primary font-bold rounded-xl shadow-sm hover:bg-primary-container transition-all">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</html>

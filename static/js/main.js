@@ -21,14 +21,41 @@ const nextBtn = document.getElementById("nextBtn");
 const reviewBtn = document.getElementById("reviewBtn");
 const submitBtn = document.getElementById("submitBtn");
 const footerSubmitBtn = document.getElementById("footerSubmitBtn");
+const submitMessage = document.getElementById("submitMessage");
+const clearBtn = document.getElementById("clearBtn");
 
 submitBtn.onclick = openSubmitModal;
 footerSubmitBtn.onclick = openSubmitModal;
+clearBtn.onclick = function () {
+  delete quizState.answers[quizState.current];
+  renderQuestion();
+  updateProgress();
+  renderPalette();
+};
 
 const modal = document.getElementById("submit-modal");
 const confirmBtn = document.getElementById("confirmSubmitBtn");
 
 function openSubmitModal() {
+  const unanswered =
+    quizState.questions.length - Object.keys(quizState.answers).length;
+
+  const mins = Math.floor(quizState.timer / 60);
+
+  const secs = quizState.timer % 60;
+
+  submitMessage.innerHTML = `
+        Are you sure you want to submit your exam?<br><br>
+
+        <b>Time Remaining:</b>
+        ${mins}m ${secs}s
+
+        <br>
+
+        <b>Unanswered Questions:</b>
+        ${unanswered}
+    `;
+
   modal.classList.remove("hidden");
 }
 
@@ -39,9 +66,9 @@ cancelBtn.onclick = function () {
 };
 
 confirmBtn.onclick = function () {
-    modal.classList.add("hidden");
-    submitExam();
-}
+  modal.classList.add("hidden");
+  submitExam();
+};
 
 async function loadQuestions() {
   try {
@@ -193,20 +220,20 @@ function updateTimer() {
 let submitted = false;
 
 async function submitExam() {
-    if (submitted) return;
-    submitted = true;
-    clearInterval(countdown);
-    const response = await fetch("/submit", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            answers: quizState.answers,
-        }),
-    });
-    const result = await response.json();
-    window.location = result.data.redirect;
+  if (submitted) return;
+  submitted = true;
+  clearInterval(countdown);
+  const response = await fetch("/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      answers: quizState.answers,
+    }),
+  });
+  const result = await response.json();
+  window.location = result.data.redirect;
 }
 
 nextBtn.addEventListener("click", function () {

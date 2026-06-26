@@ -436,7 +436,34 @@ overflow-hidden">
                         </button>
                         <div class="accordion-content bg-surface-container-low px-lg" id="expl-{{ loop.index }}">
                             <div class="py-lg font-body-md text-body-md text-on-surface-variant leading-relaxed">
-                                {{ q.discussion }}
+                                <div class="py-lg space-y-4">
+                                    <div>
+                                        <h4 class="font-bold text-primary mb-2">
+                                            Option-wise Explanation
+                                        </h4>
+                                        {% for letter, explanation in q.option_explanations.items() %}
+                                        <div class="mb-3 p-3 rounded-lg border border-outline-variant">
+                                            <strong>{{ letter }}</strong>
+                                            {% if letter == q.correct %}
+                                            <span class="text-green-600 font-semibold">
+                                                (Correct)
+                                            </span>
+                                            {% endif %}
+                                            <p class="mt-1 text-on-surface-variant">
+                                                {{ explanation }}
+                                            </p>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="border-t pt-4">
+                                        <h4 class="font-bold text-primary mb-2">
+                                            Concept Discussion
+                                        </h4>
+                                        <p class="text-on-surface-variant leading-relaxed">
+                                            {{ q.discussion }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -450,6 +477,23 @@ overflow-hidden">
             <button onclick="window.location='/'"
                 class="w-full sm:w-auto px-xl py-md rounded-xl border border-primary text-primary font-label-lg hover:bg-primary/5 transition-colors">Generate
                 New Quiz</button>
+            <div class="flex flex-wrap justify-center gap-md">
+
+                <button onclick="window.location='/download/questions'"
+                    class="px-xl py-md rounded-xl bg-secondary text-white">
+
+                    Download Questions
+
+                </button>
+
+                <button onclick="window.location='/download/answers'"
+                    class="px-xl py-md rounded-xl bg-primary text-white">
+
+                    Download All
+
+                </button>
+
+            </div>
         </section>
     </main>
     <!-- Footer -->

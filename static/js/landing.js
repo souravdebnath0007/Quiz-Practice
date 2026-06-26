@@ -33,32 +33,29 @@ function getFormData() {
 }
 
 form.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    if (!validateForm()) {
-        return;
+  e.preventDefault();
+  if (!validateForm()) return;
+  showLoading();
+  const data = getFormData();
+  data.duration = document.getElementById("examTime").value;
+  try {
+    const response = await fetch("/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await response.json();
+    if (result.success) {
+      window.location = result.data.redirect;
+    } else {
+      hideLoading();
+      alert(result.message);
     }
-    showLoading();
-    const data = getFormData();
-    try {
-        const response = await fetch("/generate", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-        const result = await response.json();
-        console.log(result);
-        if(result.success){
-            window.location = result.data.redirect;
-        }else{
-            hideLoading();
-            alert(result.message);
-        }
-    }
-    catch(error){
-        hideLoading();
-        console.error(error);
-        alert("Unable to connect to server.");
-    }
+  } catch (error) {
+    hideLoading();
+    console.error(error);
+    alert("Unable to connect to server.");
+  }
 });

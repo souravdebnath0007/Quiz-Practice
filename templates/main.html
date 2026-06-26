@@ -275,7 +275,8 @@
                     </div>
                 </div>
                 <button id="submitBtn"
-                    class="w-full py-md bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-all active:scale-[0.98]">Submit Exam</button>
+                    class="w-full py-md bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-all active:scale-[0.98]">Submit
+                    Exam</button>
             </div>
         </aside>
     </main>
@@ -290,6 +291,20 @@
                 </button>
             </div>
             <div class="flex items-center gap-lg">
+                <button id="clearBtn" class="flex items-center gap-xs px-lg py-sm
+border border-outline
+text-on-surface-variant
+font-bold
+rounded-lg
+hover:bg-surface-container-high
+hover:border-primary
+hover:text-primary
+transition-all">
+                    <span class="material-symbols-outlined">
+                        close
+                    </span>
+                    Clear
+                </button>
                 <button id="reviewBtn"
                     class="flex items-center gap-xs px-lg py-sm border border-[#fbc02d] text-[#fbc02d] font-bold rounded-lg hover:bg-[#fff9c4] transition-all">
                     <span class="material-symbols-outlined">bookmark</span>
@@ -319,7 +334,8 @@
                     <span class="material-symbols-outlined text-4xl">task_alt</span>
                 </div>
                 <h3 class="font-headline-lg text-on-surface mb-xs">Ready to Submit?</h3>
-                <p class="font-body-lg text-on-surface-variant mb-xl">Are you sure you want to submit your exam? You
+                <p id="submitMessage" class="font-body-lg text-on-surface-variant mb-xl">Are you sure you want to submit
+                    your exam? You
                     still have 45 minutes remaining and 12 questions unanswered.</p>
                 <div class="flex gap-md w-full">
                     <button id="cancelSubmitBtn"

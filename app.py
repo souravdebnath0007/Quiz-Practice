@@ -5,6 +5,18 @@ import re
 import requests
 from datetime import datetime
 from dotenv import load_dotenv
+from datetime import datetime
+
+from io import BytesIO
+
+from flask import send_file
+
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer
+)
 
 from flask import (
     Flask,
@@ -97,43 +109,120 @@ def build_prompt(
     difficulty,
     number_of_questions
 ):
-    prompt = f"""
-Generate exactly {number_of_questions} Multiple Choice Questions.
+    return f"""
+You are an expert exam paper setter.
+
+Generate EXACTLY {number_of_questions} high-quality Multiple Choice Questions.
+
 Topic:
 {topic}
+
 Subtopic:
-{subtopic}
+{subtopic if subtopic else "General"}
+
 Difficulty:
 {difficulty}
-Return ONLY JSON.
-Format:
+
+Instructions:
+
+1. Generate EXACTLY {number_of_questions} questions.
+2. Every question must have exactly 4 options.
+3. Only ONE option must be correct.
+4. Correct answer must be one of:
+   "A", "B", "C", or "D".
+5. Shuffle the correct option randomly across A, B, C and D.
+6. Questions must NOT be repeated.
+7. Questions should test conceptual understanding rather than memorization.
+8. Avoid ambiguous questions.
+9. Avoid options like "All of the above", "None of the above", "Both A and B", etc.
+10. Every option should be meaningful and plausible.
+11. Do NOT use markdown.
+12. Do NOT wrap the JSON inside ```json blocks.
+13. Return ONLY valid JSON.
+14. Do not write any extra text before or after the JSON.
+
+For every question provide:
+
+- question
+- options
+- correct answer
+- explanation for EACH option
+- overall concept explanation
+
+JSON FORMAT:
+
 [
     {{
-        "question":"",
-        "options":[
-            "",
-            "",
-            "",
-            ""
+        "question": "Question text",
+
+        "options": [
+            "Option A",
+            "Option B",
+            "Option C",
+            "Option D"
         ],
-        "correct":"A",
-        "discussion":""
+
+        "correct": "A",
+
+        "option_explanations": {{
+            "A": "Explain why Option A is correct or incorrect.",
+            "B": "Explain why Option B is correct or incorrect.",
+            "C": "Explain why Option C is correct or incorrect.",
+            "D": "Explain why Option D is correct or incorrect."
+        }},
+
+        "discussion": "Explain the complete concept behind this question in 80-150 words. Teach the concept instead of merely restating the answer."
     }}
 ]
-"""
-    return prompt
 
+Rules for option_explanations:
+
+• If an option is correct, explain WHY it is correct.
+• If an option is incorrect, explain WHY it is incorrect.
+• Never simply say "Incorrect."
+• Mention the concept or reasoning.
+• Each explanation should be 15-40 words.
+
+Rules for discussion:
+
+• Explain the underlying concept clearly.
+• Mention why the correct answer works.
+• Mention common misconceptions if relevant.
+• Keep it educational.
+• Length: 80-150 words.
+
+Return ONLY the JSON array.
+"""
 def validate_questions(questions):
     valid = []
+
     for q in questions:
-        if (
-            "question" in q and
-            "options" in q and
-            "correct" in q and
-            "discussion" in q
-        ):
-            if len(q["options"]) == 4:
-                valid.append(q)
+
+        required = [
+            "question",
+            "options",
+            "correct",
+            "discussion",
+            "option_explanations"
+        ]
+
+        if not all(key in q for key in required):
+            continue
+
+        if len(q["options"]) != 4:
+            continue
+
+        if q["correct"] not in ["A", "B", "C", "D"]:
+            continue
+
+        if not isinstance(q["option_explanations"], dict):
+            continue
+
+        if not all(k in q["option_explanations"] for k in ["A", "B", "C", "D"]):
+            continue
+
+        valid.append(q)
+
     return valid
 
 def calculate_time_taken():
@@ -181,6 +270,7 @@ def calculate_result():
             "correct": actual,
             "correct_index": letters.index(actual),
             "discussion": question["discussion"],
+            "option_explanations": question.get("option_explanations", {}),
             "status": status,
             "attempted": selected != ""
         })
@@ -258,19 +348,25 @@ def generate():
             questions
         )
         session["quiz"] = questions
-        difficulty_time = {
-            "Easy": 90,
-            "Medium": 60,
-            "Hard": 30
+        selected_time = data.get("duration","auto")
+
+        difficulty_time={
+            "Easy":90,
+            "Medium":60,
+            "Hard":30
         }
 
-        per_question = difficulty_time.get(difficulty,60)
+        if selected_time=="auto":
+            duration = number * difficulty_time.get(difficulty,60)
+
+        else:
+            duration = int(selected_time)*60
 
         session["exam_meta"]={
             "topic":topic,
             "difficulty":difficulty,
             "total":number,
-            "duration":number*per_question
+            "duration":duration
         }
         return json_success({
             "redirect":"/exam"
@@ -307,6 +403,223 @@ def questions():
         "total": meta.get("total", len(data)),
         "duration": meta.get("duration", len(data) * 60)
     })
+
+@app.route("/download/questions")
+def download_questions():
+
+    quiz = session.get("quiz", [])
+    meta = session.get("exam_meta", {})
+
+    now = datetime.now()
+
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        rightMargin=35,
+        leftMargin=35,
+        topMargin=35,
+        bottomMargin=35
+    )
+
+    styles = getSampleStyleSheet()
+
+    story = []
+
+    story.append(
+        Paragraph("<b><font size=20>QuizAI Question Paper</font></b>", styles["Title"])
+    )
+
+    story.append(Spacer(1, 18))
+
+    story.append(Paragraph(f"<b>Topic:</b> {meta.get('topic','')}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Difficulty:</b> {meta.get('difficulty','')}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Total Questions:</b> {len(quiz)}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Exam Duration:</b> {meta.get('duration',0)//60} Minutes", styles["Normal"]))
+    story.append(Paragraph(f"<b>Date:</b> {now.strftime('%d %B %Y')}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Time:</b> {now.strftime('%I:%M %p')}", styles["Normal"]))
+
+    story.append(Spacer(1, 20))
+
+    letters = ["A","B","C","D"]
+
+    for i,q in enumerate(quiz):
+
+        story.append(
+            Paragraph(
+                f"<b>Question {i+1}</b>",
+                styles["Heading2"]
+            )
+        )
+
+        story.append(
+            Paragraph(
+                q["question"],
+                styles["BodyText"]
+            )
+        )
+
+        story.append(Spacer(1,6))
+
+        for j,opt in enumerate(q["options"]):
+
+            story.append(
+                Paragraph(
+                    f"{letters[j]}. {opt}",
+                    styles["BodyText"]
+                )
+            )
+
+        story.append(Spacer(1,16))
+
+    doc.build(story)
+
+    buffer.seek(0)
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"Question_Paper_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf",
+        mimetype="application/pdf"
+    )
+
+@app.route("/download/answers")
+def download_answers():
+
+    quiz = session.get("quiz", [])
+    meta = session.get("exam_meta", {})
+
+    now = datetime.now()
+
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        rightMargin=35,
+        leftMargin=35,
+        topMargin=35,
+        bottomMargin=35
+    )
+
+    styles = getSampleStyleSheet()
+
+    story = []
+
+    story.append(
+        Paragraph(
+            "<b><font size=20>QuizAI Solution Booklet</font></b>",
+            styles["Title"]
+        )
+    )
+
+    story.append(Spacer(1,18))
+
+    story.append(Paragraph(f"<b>Topic:</b> {meta.get('topic','')}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Difficulty:</b> {meta.get('difficulty','')}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Total Questions:</b> {len(quiz)}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Exam Duration:</b> {meta.get('duration',0)//60} Minutes", styles["Normal"]))
+    story.append(Paragraph(f"<b>Date:</b> {now.strftime('%d %B %Y')}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Time:</b> {now.strftime('%I:%M %p')}", styles["Normal"]))
+
+    story.append(Spacer(1,20))
+
+    letters=["A","B","C","D"]
+
+    for i,q in enumerate(quiz):
+
+        story.append(
+            Paragraph(
+                f"<b>Question {i+1}</b>",
+                styles["Heading2"]
+            )
+        )
+
+        story.append(
+            Paragraph(
+                q["question"],
+                styles["BodyText"]
+            )
+        )
+
+        story.append(Spacer(1,6))
+
+        for j,opt in enumerate(q["options"]):
+
+            story.append(
+                Paragraph(
+                    f"{letters[j]}. {opt}",
+                    styles["BodyText"]
+                )
+            )
+
+        story.append(Spacer(1,8))
+
+        story.append(
+            Paragraph(
+                f"<b>Correct Answer:</b> {q['correct']}",
+                styles["BodyText"]
+            )
+        )
+
+        story.append(Spacer(1,6))
+
+        story.append(
+            Paragraph(
+                "<b>Option-wise Explanation</b>",
+                styles["Heading3"]
+            )
+        )
+
+        option_exp = q.get("option_explanations", {})
+
+        for letter in letters:
+
+            explanation = option_exp.get(letter, "Not Available")
+
+            story.append(
+                Paragraph(
+                    f"<b>{letter}.</b> {explanation}",
+                    styles["BodyText"]
+                )
+            )
+
+        story.append(Spacer(1,8))
+
+        story.append(
+            Paragraph(
+                "<b>Concept Discussion</b>",
+                styles["Heading3"]
+            )
+        )
+
+        story.append(
+            Paragraph(
+                q["discussion"],
+                styles["BodyText"]
+            )
+        )
+
+        story.append(Spacer(1,18))
+
+        story.append(
+            Paragraph(
+                "<font color='grey'>--------------------------------------------------------------</font>",
+                styles["BodyText"]
+            )
+        )
+
+        story.append(Spacer(1,12))
+
+    doc.build(story)
+
+    buffer.seek(0)
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"Solution_Booklet_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf",
+        mimetype="application/pdf"
+    )
 
 @app.route("/submit", methods=["POST"])
 def submit():
